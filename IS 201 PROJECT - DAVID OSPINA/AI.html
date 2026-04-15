@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>⚽️La Liga Guessing Game⚽️</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ef552e;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .game-box {
+            background-color: white;
+            color: black;
+            padding: 20px;
+            margin: auto;
+            width: 400px;
+            border-radius: 10px;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 10px;
+            cursor: pointer;
+        }
+
+        #result {
+            font-weight: bold;
+            margin-top: 15px;
+        }
+
+        h1 {
+            border: 3px solid white;
+            padding: 15px;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+<h1>La Liga Player Guessing Game</h1>
+
+<div class="game-box">
+    <p id="question"></p>
+
+    <div id="options"></div>
+
+    <p id="score">Correct: 0</p>
+    <p id="result"></p>
+
+    <button onclick="restartGame()" id="restartBtn" style="display:none;">Restart Game</button>
+</div>
+
+<script>
+    const players = [
+        {name: "Vinicius Jr", team: "Real Madrid", number: 7},
+        {name: "Robert Lewandowski", team: "Barcelona", number: 9},
+        {name: "Antoine Griezmann", team: "Atletico Madrid", number: 7},
+        {name: "Pedri", team: "Barcelona", number: 8},
+        {name: "Jude Bellingham", team: "Real Madrid", number: 5},
+        {name: "Joao Felix", team: "Barcelona", number: 14},
+        {name: "Alvaro Morata", team: "Atletico Madrid", number: 19}
+    ];
+
+    let correctCount = 0;
+    let gameOver = false;
+    let currentAnswer = "";
+
+    function generateQuestion() {
+        if (gameOver) return;
+
+        document.getElementById("result").textContent = "";
+
+        const randomPlayer = players[Math.floor(Math.random() * players.length)];
+        currentAnswer = randomPlayer.name;
+
+        document.getElementById("question").textContent =
+            `Who wears #${randomPlayer.number} for ${randomPlayer.team}?`;
+
+        let options = [randomPlayer.name];
+
+        while (options.length < 3) {
+            let randomOption = players[Math.floor(Math.random() * players.length)].name;
+            if (!options.includes(randomOption)) {
+                options.push(randomOption);
+            }
+        }
+
+        options.sort(() => Math.random() - 0.5);
+
+        const optionsDiv = document.getElementById("options");
+        optionsDiv.innerHTML = "";
+
+        options.forEach(option => {
+            let btn = document.createElement("button");
+            btn.textContent = option;
+            btn.onclick = () => checkAnswer(option);
+            optionsDiv.appendChild(btn);
+        });
+    }
+
+    function checkAnswer(selected) {
+        if (gameOver) return;
+
+        if (selected === currentAnswer) {
+            correctCount++;
+            document.getElementById("result").textContent = "Correct!";
+        } else {
+            document.getElementById("result").textContent = "Wrong!";
+        }
+
+        document.getElementById("score").textContent = `Correct: ${correctCount}`;
+
+        if (correctCount >= 5) {
+            document.getElementById("result").textContent = "Good job! You won!";
+            gameOver = true;
+            document.getElementById("restartBtn").style.display = "inline-block";
+            return;
+        }
+
+        generateQuestion();
+    }
+
+    function restartGame() {
+        correctCount = 0;
+        gameOver = false;
+        document.getElementById("score").textContent = "Correct: 0";
+        document.getElementById("restartBtn").style.display = "none";
+        generateQuestion();
+    }
+
+    generateQuestion();
+</script>
+
+</body>
+</html>
